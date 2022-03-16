@@ -17,26 +17,34 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// DB connection string
+// for localhost mongoDB
+// const connectionString = "mongodb://localhost:27017"
 const connectionString = "mongodb+srv://newuser:1k3HBF81EtR40VO7@cluster0.yf4oa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
 
+// Database Name
 const dbName = "test"
 
+// Collection name
 const collName = "todolist"
 
+// collection object/instance
 var collection *mongo.Collection
 
+// create connection with mongo db
 func init() {
 
+	// Set client options
 	clientOptions := options.Client().ApplyURI(connectionString)
 
-	// connecting to MongoDB
+	// connect to MongoDB
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Checking the connection
+	// Check the connection
 	err = client.Ping(context.TODO(), nil)
 
 	if err != nil {
@@ -66,7 +74,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	var task models.ToDoList
 	_ = json.NewDecoder(r.Body).Decode(&task)
-
+	// fmt.Println(task, r.Body)
 	insertOneTask(task)
 	json.NewEncoder(w).Encode(task)
 }
@@ -116,6 +124,7 @@ func DeleteAllTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	count := deleteAllTask()
 	json.NewEncoder(w).Encode(count)
+	// json.NewEncoder(w).Encode("Task not found")
 
 }
 
@@ -133,6 +142,7 @@ func getAllTask() []primitive.M {
 		if e != nil {
 			log.Fatal(e)
 		}
+		// fmt.Println("cur..>", cur, "result", reflect.TypeOf(result), reflect.TypeOf(result["_id"]))
 		results = append(results, result)
 
 	}
